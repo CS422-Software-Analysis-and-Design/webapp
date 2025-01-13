@@ -1,0 +1,100 @@
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.whl
+*.egg
+*.egg-info/
+dist/
+build/
+pip-log.txt
+
+# Java
+*.class
+*.war
+*.jar
+*.ear
+*.scala-compiled
+target/
+.gradle/
+build/
+
+# C/C++
+*.o
+*.obj
+*.so
+*.a
+*.dylib
+*.dll
+*.exe
+*.out
+
+# C#
+bin/
+obj/
+*.exe
+*.dll
+
+# Ruby
+*.gem
+.bundle/
+.rvm/
+.rbenv/
+vendor/bundle/
+
+# PHP
+vendor/
+*.lock
+
+# Logs and temp files
+*.log
+*.tmp
+*.swp
+*.swo
+*.seed
+*.pid
+*.pid.lock
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+desktop.ini
+._*
+
+# IDEs and editors
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+*.sublime-project
+*.sublime-workspace
+*.code-workspace
+
+
+# Environment files
+.env
+.env.*
+*.local
+
+# Coverage reports
+coverage/
+*.lcov
+*.coverage
+.nyc_output/
+
+# Miscellaneous
+*.bak
+*.old
+*.orig
+*.~*
+*.lock
+*.orig
+*.rej

@@ -1,0 +1,9 @@
+[submodule "fe"]
+	path = fe
+	url = https://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@github.com/CS300-Group07/fe.git
+[submodule "be"]
+	path = be
+	url = https://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@github.com/CS300-Group07/be.git
+[submodule "db"]
+	path = db
+	url = https://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@github.com/CS300-Group07/db.git

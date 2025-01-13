@@ -1,0 +1,76 @@
+services:
+  database: 
+    container_name: ${DATABASE_CONTAINER_NAME}
+    build: ./db 
+    ports: 
+      - ${DB_PORT}:${DB_PORT} 
+    expose: 
+      - ${DB_PORT} 
+    networks: 
+      - db_be_network 
+    environment: 
+      - DB_HOST=${DB_HOST} 
+      - DB_PORT=${DB_PORT}
+      - POSTGRES_USER=${POSTGRES_USER} 
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD} 
+      - POSTGRES_DB=${POSTGRES_DB} 
+    command: postgres -p ${DB_PORT}
+    tty: true 
+
+
+  backend: 
+    container_name: ${BACKEND_CONTAINER_NAME} 
+    build: ./be 
+    ports: 
+      - ${BACKEND_PORT}:${BACKEND_PORT} 
+    expose: 
+      - ${BACKEND_PORT} 
+    networks: 
+#     - be_fe_network 
+      - db_be_network
+    environment: 
+      - BACKEND_HOST=${BACKEND_HOST} 
+      - BACKEND_PORT=${BACKEND_PORT}
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT} 
+      - POSTGRES_USER=${POSTGRES_USER} 
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD} 
+      - POSTGRES_DB=${POSTGRES_DB}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    depends_on: 
+      - database
+    tty: true
+    volumes: 
+      - ./be:/app           # Mount source code
+      - backend_venv:/root/.cache/pip  # Persist Python packages cache
+
+      #  frontend: 
+      #    container_name: ${FRONTEND_CONTAINER_NAME}
+      #      build: ./fe 
+      #      ports: 
+      #      - ${FRONTEND_PORT}:${FRONTEND_PORT}
+      #    expose: 
+      #      - ${FRONTEND_PORT}
+      #    networks: 
+      #      - be_fe_network
+      #    environment: 
+      #      - FRONTEND_HOST=${FRONTEND_HOST}
+      #      - FRONTEND_PORT=${FRONTEND_PORT}
+      #      - BACKEND_HOST=${BACKEND_HOST} 
+      #      - BACKEND_PORT=${BACKEND_PORT} 
+      #    depends_on:
+      #      - backend
+      #    tty: true
+      #    volumes:
+      #      - ./fe:/app
+      #      - /app/node_modules
+
+networks: 
+  db_be_network: 
+    driver: bridge
+  be_fe_network: 
+    driver: bridge
+
+volumes:
+  backend_venv: 
+
