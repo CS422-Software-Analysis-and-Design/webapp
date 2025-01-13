@@ -1,0 +1,10 @@
+Flask
+flask-cors
+fake-useragent
+bs4
+requests
+pillow
+selenium
+psycopg2-binary
+openai
+python-dotenv

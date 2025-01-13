@@ -1,0 +1,7 @@
+brief
+detail 
+brand
+rating 
+shipping
+discount 
+seller 
