@@ -20,7 +20,7 @@ function Header() {
         navigate(route);
     };
   return (
-    <header className="bg-purple-600 text-white p-4">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-cyan-400 to-blue-600 text-white p-4 shadow-md">
       <div className="container mx-auto flex justify-between items-center">
         <h1 className="text-2xl font-bold">VBMatch</h1>
         <nav className="flex space-x-4">
@@ -30,8 +30,8 @@ function Header() {
                 className={`px-4 py-2 rounded 
                   ${
                     pathSections === item.route
-                      ? "bg-blue-500 text-white-bold"
-                      : "hover:bg-gray-200 text-gray-700"
+                      ? "bg-indigo-800 text-white-bold"
+                      : "hover:bg-indigo-800 text-white"
                   }`}
                 onClick={() => handleItemClick(item.route)}>
                 {item.label}

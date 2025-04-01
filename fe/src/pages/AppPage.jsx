@@ -19,36 +19,32 @@ function AppPage() {
     const isChatbotScreen = location.pathname.split("/")[2] === appRoutes.CHATBOT;
 
     return (
-        <div className="AppPage flex flex-col h-screen overflow-hidden">
-            <div className="TopbarContainer fixed top-0 left-0 w-full z-50">
-                <Header/>
-            </div>
-            <div className={`mt-20 flex-1 ${isChatbotScreen ? 'overflow-hidden' : 'overflow-y-auto'}`}>
-                <div className="ContentContainer">
-                    <Routes>
-                        <Route path={appRoutes.HOME} element={<Home />} />
-                        <Route path={appRoutes.PRODUCTS} element={<ProductPage/>}>
-                            <Route path=":productId" element={<ProductDetail/>}/>
-                            <Route path="" element={<Products />} />
-                        </Route>
-                        <Route path={appRoutes.PRODUCTS_SEARCH} element={<Products/>} />
-                        <Route path={appRoutes.COMPARE} element={<Compare/>} />
-                        <Route path={appRoutes.NOTFOUND} element={<NotFound />} />
-                        <Route path={appRoutes.FAVOURITE} element={<Favourite/>} />
-                        <Route path={appRoutes.PRODUCTDETAIL} element={<ProductDetail/>}/>
-                        <Route path={appRoutes.CHATBOT} element={<ChatbotScreen/>} />
-                        <Route
-                            path="*"
-                            element={<Navigate to="/app/home" replace />}
-                        />
-                    </Routes>
+        <div className="flex flex-col min-h-screen">
+            <Header />
+            <main className={`flew-grow pt-[64px] ${isChatbotScreen ? 'overflow-hidden' : 'overflow-y-auto'}`}>
+                <Routes>
+                    <Route path={appRoutes.HOME} element={<Home />} />
+                    <Route path={appRoutes.PRODUCTS} element={<ProductPage/>}>
+                        <Route path=":productId" element={<ProductDetail/>}/>
+                        <Route path="" element={<Products />} />
+                    </Route>
+                    <Route path={appRoutes.PRODUCTS_SEARCH} element={<Products/>} />
+                    <Route path={appRoutes.COMPARE} element={<Compare/>} />
+                    <Route path={appRoutes.NOTFOUND} element={<NotFound />} />
+                    <Route path={appRoutes.FAVOURITE} element={<Favourite/>} />
+                    <Route path={appRoutes.PRODUCTDETAIL} element={<ProductDetail/>}/>
+                    <Route path={appRoutes.CHATBOT} element={<ChatbotScreen/>} />
+                    <Route
+                        path="*"
+                        element={<Navigate to="/app/home" replace />}
+                    />
+                </Routes>
+            </main>
+            {!isChatbotScreen && (
+                <div className="FooterContainer">
+                    <Footer />
                 </div>
-                {!isChatbotScreen && (
-                    <div className="FooterContainer">
-                        <Footer />
-                    </div>
-                )}
-            </div>
+            )}
         </div>
     );
 }

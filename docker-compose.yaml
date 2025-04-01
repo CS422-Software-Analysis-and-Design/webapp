@@ -44,27 +44,6 @@ services:
       - ./be:/app           # Mount source code
       - backend_venv:/root/.cache/pip  # Persist Python packages cache
 
-      #  frontend: 
-      #    container_name: ${FRONTEND_CONTAINER_NAME}
-      #      build: ./fe 
-      #      ports: 
-      #      - ${FRONTEND_PORT}:${FRONTEND_PORT}
-      #    expose: 
-      #      - ${FRONTEND_PORT}
-      #    networks: 
-      #      - be_fe_network
-      #    environment: 
-      #      - FRONTEND_HOST=${FRONTEND_HOST}
-      #      - FRONTEND_PORT=${FRONTEND_PORT}
-      #      - BACKEND_HOST=${BACKEND_HOST} 
-      #      - BACKEND_PORT=${BACKEND_PORT} 
-      #    depends_on:
-      #      - backend
-      #    tty: true
-      #    volumes:
-      #      - ./fe:/app
-      #      - /app/node_modules
-
 networks: 
   db_be_network: 
     driver: bridge

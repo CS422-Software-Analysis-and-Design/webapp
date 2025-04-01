@@ -27,23 +27,35 @@ const SearchBar = ({ setProducts, setLoading, isIncreasingPrice }) => {
   };
 
   return (
-    <form onSubmit={handleSearch}>
-      <div className="flex justify-center items-center mt-5">
-        <input
-          type="text"
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-          placeholder="Search..."
-          className="w-full max-w-md px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent"
-        />
-        <button
-          onClick={handleSearch}
-          className="ml-2 px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75"
-        >
-          Search
-        </button>
-      </div>
-    </form>
+    <div className="max-w-2xl mx-auto mt-6">
+      <form onSubmit={handleSearch} className="flex items-center">
+        <div className="relative flex-grow">
+          <input
+            type="text"
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            placeholder="Search..."
+            className="w-full border-none rounded-l-full pl-6 pr-12 py-3 text-gray-800 shadow-inner focus:outline-none focus:ring-2 focus:ring-blue-300"
+          />
+          { inputValue && (
+            <button
+              type='button'
+              className='absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-700'
+              onClick={() => setInputValue('')}
+            >
+              ✕
+            </button>
+          )
+          }
+        </div>
+          <button
+            type="submit"
+            className="bg-indigo-800 hover:bg-indigo-900 text-white font-medium px-6 py-3 rounded-r-full transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-300"
+          >
+            Tìm kiếm
+          </button>
+      </form>
+    </div>
   );
 };
 
