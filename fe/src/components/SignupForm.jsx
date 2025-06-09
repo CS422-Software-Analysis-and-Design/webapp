@@ -92,7 +92,7 @@ const SignupForm = () => {
             Username
           </label>
           <input
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition duration-200"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
             type="text"
             id="username"
             name="username"
@@ -108,7 +108,7 @@ const SignupForm = () => {
             Email
           </label>
           <input
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition duration-200"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
             type="email"
             id="email"
             name="email"
@@ -124,7 +124,7 @@ const SignupForm = () => {
             Password
           </label>
           <input
-            className="w-full px-4 py-2 pr-10 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition duration-200"
+            className="w-full px-4 py-2 pr-10 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
             type={passwordVisible ? "text" : "password"}
             id="password"
             name="password"
@@ -153,7 +153,7 @@ const SignupForm = () => {
               passwordsMatch ? "border-gray-300" : "border-red-500"
             } rounded-lg shadow-sm focus:outline-none focus:ring-2 ${
               passwordsMatch
-                ? "focus:ring-purple-500"
+                ? "focus:ring-blue-500"
                 : "focus:ring-red-500"
             } focus:border-transparent transition duration-200`}
             type={confirmPasswordVisible ? "text" : "password"}
@@ -183,19 +183,19 @@ const SignupForm = () => {
           <input
             type="checkbox"
             id="terms"
-            className="w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500"
+            className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
             required
           />
           <label htmlFor="terms" className="ml-2 text-sm text-gray-700">
             I agree to the{" "}
-            <a href="#" className="text-purple-600 hover:underline">
+            <a href="#" className="text-blue-600 hover:underline">
               terms and conditions
             </a>
           </label>
         </div>
         {/* Submit Button */}
         <button
-          className="w-full py-3 font-semibold text-white bg-purple-600 rounded-lg shadow-lg hover:bg-purple-700 focus:outline-none focus:ring-4 focus:ring-purple-300 transition duration-200"
+          className="w-full py-3 font-semibold text-white bg-blue-600 rounded-lg shadow-lg hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 transition duration-200"
           type="submit"
         >
           Sign Up
@@ -245,7 +245,7 @@ const SignupForm = () => {
         Already have an account?{" "}
         <Link
           to={routes.LOGIN}
-          className="text-purple-600 hover:underline"
+          className="text-blue-600 hover:underline"
         >
           Login
         </Link>
