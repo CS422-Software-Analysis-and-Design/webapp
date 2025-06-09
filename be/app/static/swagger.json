@@ -1,0 +1,335 @@
+{
+  "openapi": "3.0.2",
+  "info": {
+    "title": "Shopping API",
+    "description": "API for shopping application with product search, user accounts, and chatbot functionality",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "/",
+      "description": "Main server"
+    }
+  ],
+  "tags": [
+    {
+      "name": "products",
+      "description": "Product operations"
+    },
+    {
+      "name": "accounts",
+      "description": "User account operations"
+    },
+    {
+      "name": "chatbot",
+      "description": "Chatbot operations"
+    },
+    {
+      "name": "wishlist",
+      "description": "Wishlist operations"
+    }
+  ],
+  "paths": {
+    "/search_products": {
+      "get": {
+        "tags": ["products"],
+        "summary": "Search for products",
+        "parameters": [
+          {
+            "name": "key",
+            "in": "query",
+            "required": true,
+            "description": "Search keyword",
+            "schema": {"type": "string"}
+          },
+          {
+            "name": "num",
+            "in": "query",
+            "required": false,
+            "description": "Number of results per page",
+            "schema": {"type": "integer", "default": 200}
+          },
+          {
+            "name": "start",
+            "in": "query",
+            "required": false,
+            "description": "Starting index for pagination",
+            "schema": {"type": "integer", "default": 0}
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Product"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/login/{username}/{hashing_password}": {
+      "post": {
+        "tags": ["accounts"],
+        "summary": "User login",
+        "parameters": [
+          {
+            "name": "username",
+            "in": "path",
+            "required": true,
+            "description": "Username for login",
+            "schema": {"type": "string"}
+          },
+          {
+            "name": "hashing_password",
+            "in": "path",
+            "required": true,
+            "description": "Hashed password for login",
+            "schema": {"type": "string"}
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Login successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "cookies": {"type": "string"},
+                    "user_id": {"type": "integer"}
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Login failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {"type": "string"}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/signup/{username}/{email}/{password}": {
+      "post": {
+        "tags": ["accounts"],
+        "summary": "User signup",
+        "parameters": [
+          {
+            "name": "username",
+            "in": "path",
+            "required": true,
+            "description": "Username for signup",
+            "schema": {"type": "string"}
+          },
+          {
+            "name": "email",
+            "in": "path",
+            "required": true,
+            "description": "Email for signup",
+            "schema": {"type": "string"}
+          },
+          {
+            "name": "password",
+            "in": "path",
+            "required": true,
+            "description": "Password for signup",
+            "schema": {"type": "string"}
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Signup successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {"type": "string"}
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Signup failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {"type": "string"}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/product/{keyword}/{filter}/{len}/{page}": {
+      "get": {
+        "tags": ["products"],
+        "summary": "Search products by keyword with filtering and pagination",
+        "parameters": [
+          {
+            "name": "keyword",
+            "in": "path",
+            "required": true,
+            "description": "Search keyword",
+            "schema": {"type": "string"}
+          },
+          {
+            "name": "filter",
+            "in": "path",
+            "required": true,
+            "description": "Filter parameter",
+            "schema": {"type": "string"}
+          },
+          {
+            "name": "len",
+            "in": "path",
+            "required": true,
+            "description": "Number of results per page",
+            "schema": {"type": "integer"}
+          },
+          {
+            "name": "page",
+            "in": "path",
+            "required": true,
+            "description": "Page number",
+            "schema": {"type": "integer"}
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Product"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/product/{product_id}": {
+      "get": {
+        "tags": ["products"],
+        "summary": "Get product by ID",
+        "parameters": [
+          {
+            "name": "product_id",
+            "in": "path",
+            "required": true,
+            "description": "Product ID",
+            "schema": {"type": "integer"}
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Product"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/chatbot/create/{user_id}": {
+      "post": {
+        "tags": ["chatbot"],
+        "summary": "Create a new conversation",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "description": "User ID",
+            "schema": {"type": "string"}
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Conversation created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/wish-list/user/{user_id}": {
+      "get": {
+        "tags": ["wishlist"],
+        "summary": "Get user's wishlist",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "description": "User ID",
+            "schema": {"type": "integer"}
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Product"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Product": {
+        "type": "object",
+        "properties": {
+          "title": {"type": "string"},
+          "price": {"type": "integer"},
+          "image": {"type": "string"},
+          "retailer": {"type": "string"},
+          "product_url": {"type": "string"}
+        }
+      }
+    }
+  }
+}

@@ -1,4 +1,4 @@
-from flask import Flask, request, Response
+from flask import Flask, request, Response, send_from_directory
 from flask_cors import CORS
 import json
 from fake_useragent import UserAgent
@@ -10,16 +10,29 @@ from app.services.product_services import search_product_with_product_id as serv
 from app.services import product_services
 from app.services import openai_services
 from app.services import wish_list_services
+from app.swagger import swagger_ui_blueprint, SWAGGER_URL
 
 app = Flask(__name__)
 CORS(app)
 
+# Register Swagger UI blueprint
+app.register_blueprint(swagger_ui_blueprint, url_prefix=SWAGGER_URL)
+
 user_agent = UserAgent(os=['linux', 'macos', 'windows'])
+
+# Route to serve Swagger JSON
+@app.route('/static/<path:path>')
+def send_static(path):
+    return send_from_directory('static', path)
 
 
 @app.route("/")
 def hello_world():
-    return "<p>Hello, World!</p>"
+    return """
+    <h1>Shopping API</h1>
+    <p>Welcome to the Shopping API. This API provides endpoints for searching products, managing user accounts, and chatbot functionality.</p>
+    <p>API Documentation is available at <a href='/api/docs'>/api/docs</a></p>
+    """
 
 @app.route("/search_products")
 def search_products():

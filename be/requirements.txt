@@ -8,3 +8,6 @@ selenium
 psycopg2-binary
 openai
 python-dotenv
+flask-swagger-ui
+apispec
+marshmallow
