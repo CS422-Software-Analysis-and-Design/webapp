@@ -103,10 +103,10 @@ const FavoritePage = () => {
                 <h2 className="text-lg font-semibold">{product.name}</h2>
                 {product.originalPrice && (
                   <p className="text-red-500 text-sm line-through">
-                    {formatPrice(product.originalPrice)}đ
+                    {formatPrice(product.originalPrice)}{product.currency === 'USD' ? '$' : 'đ'}
                   </p>
                 )}
-                <p className="text-green-500 font-bold">{formatPrice(product.price)}đ</p>
+                <p className="text-green-500 font-bold">{formatPrice(product.price)}{product.currency === 'USD' ? '$' : 'đ'}</p>
                 <div className="flex justify-between mt-4">
                   <button
                     onClick={(e) => {

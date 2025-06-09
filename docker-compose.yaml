@@ -15,7 +15,9 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD} 
       - POSTGRES_DB=${POSTGRES_DB} 
     command: postgres -p ${DB_PORT}
-    tty: true 
+    tty: true
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
 
 
   backend: 
@@ -51,5 +53,6 @@ networks:
     driver: bridge
 
 volumes:
-  backend_venv: 
+  backend_venv:
+  postgres_data:
 

@@ -4,6 +4,8 @@ Swagger documentation configuration for the API.
 from apispec import APISpec
 from apispec.ext.marshmallow import MarshmallowPlugin
 from flask_swagger_ui import get_swaggerui_blueprint
+import json
+import os
 
 # Create an APISpec
 spec = APISpec(
@@ -42,6 +44,10 @@ swagger_template = {
     ],
     "tags": [
         {
+            "name": "general",
+            "description": "General operations"
+        },
+        {
             "name": "products",
             "description": "Product operations"
         },
@@ -59,10 +65,23 @@ swagger_template = {
         }
     ],
     "paths": {
+        "/": {
+            "get": {
+                "tags": ["general"],
+                "summary": "API landing page",
+                "description": "Returns a welcome message with API information",
+                "responses": {
+                    "200": {
+                        "description": "Successful response with HTML welcome message"
+                    }
+                }
+            }
+        },
         "/search_products": {
             "get": {
                 "tags": ["products"],
                 "summary": "Search for products",
+                "description": "Search for products using a keyword",
                 "parameters": [
                     {
                         "name": "key",
@@ -107,6 +126,7 @@ swagger_template = {
             "post": {
                 "tags": ["accounts"],
                 "summary": "User login",
+                "description": "Authenticate a user with username and password",
                 "parameters": [
                     {
                         "name": "username",
@@ -158,51 +178,52 @@ swagger_template = {
             "post": {
                 "tags": ["accounts"],
                 "summary": "User signup",
+                "description": "Register a new user account",
                 "parameters": [
                     {
                         "name": "username",
                         "in": "path",
                         "required": True,
-                        "description": "Username for signup",
+                        "description": "Username for the new account",
                         "schema": {"type": "string"}
                     },
                     {
                         "name": "email",
                         "in": "path",
                         "required": True,
-                        "description": "Email for signup",
+                        "description": "Email for the new account",
                         "schema": {"type": "string"}
                     },
                     {
                         "name": "password",
                         "in": "path",
                         "required": True,
-                        "description": "Password for signup",
+                        "description": "Password for the new account",
                         "schema": {"type": "string"}
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Signup successful",
+                        "description": "Account created successfully",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "type": "object",
                                     "properties": {
-                                        "status": {"type": "string"}
+                                        "status": {"type": "string", "example": "created"}
                                     }
                                 }
                             }
                         }
                     },
                     "400": {
-                        "description": "Signup failed",
+                        "description": "Account creation failed",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "type": "object",
                                     "properties": {
-                                        "status": {"type": "string"}
+                                        "status": {"type": "string", "example": "duplicate username"}
                                     }
                                 }
                             }
@@ -214,7 +235,8 @@ swagger_template = {
         "/product/{keyword}/{filter}/{len}/{page}": {
             "get": {
                 "tags": ["products"],
-                "summary": "Search products by keyword with filtering and pagination",
+                "summary": "Search products with keyword",
+                "description": "Search for products with keyword, filter, and pagination",
                 "parameters": [
                     {
                         "name": "keyword",
@@ -227,7 +249,7 @@ swagger_template = {
                         "name": "filter",
                         "in": "path",
                         "required": True,
-                        "description": "Filter parameter",
+                        "description": "Filter criteria",
                         "schema": {"type": "string"}
                     },
                     {
@@ -241,7 +263,7 @@ swagger_template = {
                         "name": "page",
                         "in": "path",
                         "required": True,
-                        "description": "Page number",
+                        "description": "Page number for pagination",
                         "schema": {"type": "integer"}
                     }
                 ],
@@ -266,12 +288,13 @@ swagger_template = {
             "get": {
                 "tags": ["products"],
                 "summary": "Get product by ID",
+                "description": "Retrieve a product by its ID and record a view",
                 "parameters": [
                     {
                         "name": "product_id",
                         "in": "path",
                         "required": True,
-                        "description": "Product ID",
+                        "description": "ID of the product to retrieve",
                         "schema": {"type": "integer"}
                     }
                 ],
@@ -289,26 +312,490 @@ swagger_template = {
                 }
             }
         },
-        "/chatbot/create/{user_id}": {
+        "/list-db-content": {
+            "get": {
+                "tags": ["general"],
+                "summary": "List database content",
+                "description": "List all tables and their content in the database",
+                "responses": {
+                    "200": {
+                        "description": "Successful response with database content"
+                    }
+                }
+            }
+        },
+        "/change-password/{username}/{old_password}/{new_password}": {
             "post": {
-                "tags": ["chatbot"],
-                "summary": "Create a new conversation",
+                "tags": ["accounts"],
+                "summary": "Change user password",
+                "description": "Change a user's password with verification",
                 "parameters": [
                     {
-                        "name": "user_id",
+                        "name": "username",
                         "in": "path",
                         "required": True,
-                        "description": "User ID",
+                        "description": "Username of the account",
+                        "schema": {"type": "string"}
+                    },
+                    {
+                        "name": "old_password",
+                        "in": "path",
+                        "required": True,
+                        "description": "Current password for verification",
+                        "schema": {"type": "string"}
+                    },
+                    {
+                        "name": "new_password",
+                        "in": "path",
+                        "required": True,
+                        "description": "New password to set",
                         "schema": {"type": "string"}
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Conversation created successfully",
+                        "description": "Password changed successfully",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "type": "object"
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {"type": "string", "example": "changed"}
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Password change failed",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {"type": "string", "example": "failed"}
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/account/{username}": {
+            "get": {
+                "tags": ["accounts"],
+                "summary": "Get account information",
+                "description": "Retrieve account information for a username",
+                "parameters": [
+                    {
+                        "name": "username",
+                        "in": "path",
+                        "required": True,
+                        "description": "Username of the account",
+                        "schema": {"type": "string"}
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response with user information",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/User"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/chatbot/create/{user_id}": {
+            "post": {
+                "tags": ["chatbot"],
+                "summary": "Create a new conversation",
+                "description": "Create a new chatbot conversation for a user",
+                "parameters": [
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "required": True,
+                        "description": "ID of the user",
+                        "schema": {"type": "string"}
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response with new conversation information"
+                    }
+                }
+            }
+        },
+        "/chatbot/conversation_list/{user_id}": {
+            "get": {
+                "tags": ["chatbot"],
+                "summary": "Get user's conversations",
+                "description": "Retrieve a list of chatbot conversations for a user",
+                "parameters": [
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "required": True,
+                        "description": "ID of the user",
+                        "schema": {"type": "string"}
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response with list of conversations"
+                    }
+                }
+            }
+        },
+        "/chatbot/{conversation_id}/content": {
+            "get": {
+                "tags": ["chatbot"],
+                "summary": "Get conversation content",
+                "description": "Retrieve the content of a specific conversation",
+                "parameters": [
+                    {
+                        "name": "conversation_id",
+                        "in": "path",
+                        "required": True,
+                        "description": "ID of the conversation",
+                        "schema": {"type": "string"}
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response with conversation content"
+                    }
+                }
+            }
+        },
+        "/chatbot/{conversation_id}/send_message/{message}": {
+            "post": {
+                "tags": ["chatbot"],
+                "summary": "Send message to conversation",
+                "description": "Send a message to a specific conversation and get a response",
+                "parameters": [
+                    {
+                        "name": "conversation_id",
+                        "in": "path",
+                        "required": True,
+                        "description": "ID of the conversation",
+                        "schema": {"type": "string"}
+                    },
+                    {
+                        "name": "message",
+                        "in": "path",
+                        "required": True,
+                        "description": "Message to send",
+                        "schema": {"type": "string"}
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response with chatbot answer",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "response": {"type": "string"}
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/products/lastest": {
+            "get": {
+                "tags": ["products"],
+                "summary": "Get latest products",
+                "description": "Retrieve the latest 10 products added to the database",
+                "responses": {
+                    "200": {
+                        "description": "Successful response with latest products",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Product"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/products/recent": {
+            "get": {
+                "tags": ["products"],
+                "summary": "Get recent products",
+                "description": "Retrieve the 10 most recently viewed products",
+                "responses": {
+                    "200": {
+                        "description": "Successful response with recent products",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Product"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/product/{product_id}/{user_id}": {
+            "post": {
+                "tags": ["products"],
+                "summary": "View product with user tracking",
+                "description": "Record a product view by a specific user and retrieve the product",
+                "parameters": [
+                    {
+                        "name": "product_id",
+                        "in": "path",
+                        "required": True,
+                        "description": "ID of the product to view",
+                        "schema": {"type": "integer"}
+                    },
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "required": True,
+                        "description": "ID of the user viewing the product",
+                        "schema": {"type": "integer"}
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response with product information",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Product"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/products/top_frequency": {
+            "get": {
+                "tags": ["products"],
+                "summary": "Get top viewed products",
+                "description": "Retrieve the 10 most frequently viewed products",
+                "responses": {
+                    "200": {
+                        "description": "Successful response with top viewed products",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Product"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/products/trending": {
+            "get": {
+                "tags": ["products"],
+                "summary": "Get trending products",
+                "description": "Retrieve the 10 trending products based on recent views",
+                "responses": {
+                    "200": {
+                        "description": "Successful response with trending products",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Product"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/account/update/{user_id}": {
+            "post": {
+                "tags": ["accounts"],
+                "summary": "Update user information",
+                "description": "Update personal information for a user account",
+                "parameters": [
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "required": True,
+                        "description": "ID of the user to update",
+                        "schema": {"type": "integer"}
+                    }
+                ],
+                "requestBody": {
+                    "required": True,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "first_name": {"type": "string"},
+                                    "last_name": {"type": "string"},
+                                    "email": {"type": "string"},
+                                    "phone": {"type": "string"},
+                                    "address_line1": {"type": "string"},
+                                    "address_line2": {"type": "string"},
+                                    "city": {"type": "string"},
+                                    "state": {"type": "string"},
+                                    "postal_code": {"type": "string"},
+                                    "country": {"type": "string"}
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "User information updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {"type": "string", "example": "updated"}
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Update failed",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {"type": "string", "example": "failed"},
+                                        "message": {"type": "string"}
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/wish-list/add/{user_id}/{product_id}": {
+            "post": {
+                "tags": ["wishlist"],
+                "summary": "Add product to wishlist",
+                "description": "Add a product to a user's wishlist",
+                "parameters": [
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "required": True,
+                        "description": "ID of the user",
+                        "schema": {"type": "integer"}
+                    },
+                    {
+                        "name": "product_id",
+                        "in": "path",
+                        "required": True,
+                        "description": "ID of the product to add",
+                        "schema": {"type": "integer"}
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Product added to wishlist successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {"type": "string", "example": "added"}
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Failed to add product to wishlist",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {"type": "string", "example": "failed"}
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/wish-list/remove/{user_id}/{product_id}": {
+            "post": {
+                "tags": ["wishlist"],
+                "summary": "Remove product from wishlist",
+                "description": "Remove a product from a user's wishlist",
+                "parameters": [
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "required": True,
+                        "description": "ID of the user",
+                        "schema": {"type": "integer"}
+                    },
+                    {
+                        "name": "product_id",
+                        "in": "path",
+                        "required": True,
+                        "description": "ID of the product to remove",
+                        "schema": {"type": "integer"}
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Product removed from wishlist successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {"type": "string", "example": "removed"}
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Failed to remove product from wishlist",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {"type": "string", "example": "failed"}
+                                    }
                                 }
                             }
                         }
@@ -320,24 +807,83 @@ swagger_template = {
             "get": {
                 "tags": ["wishlist"],
                 "summary": "Get user's wishlist",
+                "description": "Retrieve all products in a user's wishlist",
                 "parameters": [
                     {
                         "name": "user_id",
                         "in": "path",
                         "required": True,
-                        "description": "User ID",
+                        "description": "ID of the user",
                         "schema": {"type": "integer"}
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Successful response",
+                        "description": "Successful response with wishlist products",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "type": "array",
                                     "items": {
                                         "$ref": "#/components/schemas/Product"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/products/compare": {
+            "post": {
+                "tags": ["products"],
+                "summary": "Compare products",
+                "description": "Compare multiple products using AI analysis",
+                "requestBody": {
+                    "required": True,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "id": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "integer"
+                                        },
+                                        "description": "Array of product IDs to compare"
+                                    }
+                                },
+                                "required": ["id"]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful comparison",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {"type": "string", "example": "success"},
+                                        "message": {"type": "string", "description": "Markdown-formatted comparison result"},
+                                        "attempt": {"type": "integer"}
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Comparison failed",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {"type": "string", "example": "failed"},
+                                        "message": {"type": "string"}
                                     }
                                 }
                             }
@@ -352,13 +898,51 @@ swagger_template = {
             "Product": {
                 "type": "object",
                 "properties": {
+                    "product_id": {"type": "integer"},
                     "title": {"type": "string"},
-                    "price": {"type": "integer"},
+                    "price": {"type": "number"},
                     "image": {"type": "string"},
                     "retailer": {"type": "string"},
-                    "product_url": {"type": "string"}
+                    "product_url": {"type": "string"},
+                    "description": {"type": "string"}
+                }
+            },
+            "User": {
+                "type": "object",
+                "properties": {
+                    "user_id": {"type": "integer"},
+                    "username": {"type": "string"},
+                    "email": {"type": "string"},
+                    "first_name": {"type": "string"},
+                    "last_name": {"type": "string"},
+                    "phone": {"type": "string"},
+                    "address_line1": {"type": "string"},
+                    "address_line2": {"type": "string"},
+                    "city": {"type": "string"},
+                    "state": {"type": "string"},
+                    "postal_code": {"type": "string"},
+                    "country": {"type": "string"}
                 }
             }
         }
     }
 }
+
+# Write the swagger JSON to a file
+def write_swagger_json():
+    """Write the swagger template to a static JSON file for the Swagger UI to consume."""
+    static_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static')
+    os.makedirs(static_dir, exist_ok=True)
+    
+    swagger_json_path = os.path.join(static_dir, 'swagger.json')
+    
+    # Convert Python True/False to JSON true/false
+    swagger_str = json.dumps(swagger_template, indent=2)
+    swagger_str = swagger_str.replace(': True', ': true')
+    swagger_str = swagger_str.replace(': False', ': false')
+    
+    with open(swagger_json_path, 'w') as f:
+        f.write(swagger_str)
+
+# Automatically write the swagger.json file when this module is imported
+write_swagger_json()

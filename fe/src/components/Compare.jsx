@@ -255,7 +255,7 @@ function Compare() {
                     <div className="p-4">
                       <p className="text-sm text-blue-600 font-medium mb-1">{product.retailer}</p>
                       <h3 className="text-gray-800 font-semibold mb-2 line-clamp-2 h-12">{product.name}</h3>
-                      <p className="text-lg font-bold text-gray-900 mb-3">{product.price.toLocaleString('vi-VN')}đ</p>
+                      <p className="text-lg font-bold text-gray-900 mb-3">{product.price.toLocaleString('vi-VN')}{product.currency === 'USD' ? '$' : 'đ'}</p>
                       <button
                         className="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg font-medium text-sm flex items-center justify-center gap-2 transition-colors duration-300"
                         onClick={() => handleAddProduct(product)}
@@ -366,7 +366,7 @@ function Compare() {
                       {/* Product Info */}
                       <div className="p-4">
                         <h3 className="text-gray-800 font-semibold mb-3 line-clamp-2 h-12">{product.name}</h3>
-                        <p className="text-2xl font-bold text-gray-900 mb-4">{product.price.toLocaleString('vi-VN')}đ</p>
+                        <p className="text-2xl font-bold text-gray-900 mb-4">{product.price.toLocaleString('vi-VN')}{product.currency === 'USD' ? '$' : 'đ'}</p>
                         <button
                           className="w-full bg-red-500 hover:bg-red-600 text-white py-3 px-4 rounded-lg font-medium text-sm transition-colors duration-300 flex items-center justify-center gap-2"
                           onClick={() => window.open(product.product_url, '_blank')}
@@ -374,7 +374,7 @@ function Compare() {
                           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                           </svg>
-                          Mua ngay
+                          Buy Now
                         </button>
                       </div>
                     </div>
@@ -420,7 +420,7 @@ function Compare() {
                     <td className="py-4 px-6 text-gray-600 font-medium border-b">Price</td>
                     {visibleCompareProducts.map((product) => (
                       <td key={product.product_id} className="py-4 px-6 text-gray-800 border-b font-semibold">
-                        {product.price.toLocaleString('vi-VN')}đ
+                        {product.price.toLocaleString('vi-VN')}{product.currency === 'USD' ? '$' : 'đ'}
                       </td>
                     ))}
                   </tr>

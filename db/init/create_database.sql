@@ -33,7 +33,8 @@ CREATE TABLE products (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     product_url TEXT UNIQUE NOT NULL,
     retailer VARCHAR(255) NOT NULL,
-    image_url TEXT NOT NULL
+    image_url TEXT NOT NULL,
+    currency VARCHAR(10) DEFAULT 'VND'
 );
 
 CREATE TABLE product_views (

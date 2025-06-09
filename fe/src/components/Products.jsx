@@ -264,11 +264,11 @@ const Products = () => {
                     <div className="mt-auto pt-4">
                       {product.originalPrice && (
                         <p className="text-sm text-gray-500 line-through">
-                          {formatPrice(product.originalPrice)}đ
+                          {formatPrice(product.originalPrice)}{product.currency === 'USD' ? '$' : 'đ'}
                         </p>
                       )}
                       <p className="text-xl font-bold text-purple-700">
-                        {formatPrice(product.price)}đ
+                        {formatPrice(product.price)}{product.currency === 'USD' ? '$' : 'đ'}
                       </p>
                     </div>
                   </div>

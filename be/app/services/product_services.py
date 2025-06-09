@@ -11,7 +11,8 @@ CREATE TABLE products (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     product_url TEXT UNIQUE NOT NULL,
-    retailer VARCHAR(255) NOT NULL
+    retailer VARCHAR(255) NOT NULL,
+    currency VARCHAR(10) DEFAULT 'VND'
 );
 """
 
@@ -44,29 +45,29 @@ def get_product_id(name:str, retailer:str):
     result = use_db(query, data, fetch=True)
     return result[0][0] if result else None
 
-def insert_or_update_product(name: str, price: int, product_url: str, retailer: str, image_url: str):
+def insert_or_update_product(name: str, price: int, product_url: str, retailer: str, image_url: str, currency: str):
     if check_product_exists(name, retailer):
         print(f'Product {name} from {retailer} already exists. Updating price and product_url.')
         query = """
         UPDATE products
-        SET price = %s, product_url = %s, image_url = %s, updated_at = NOW()
+        SET price = %s, product_url = %s, image_url = %s, currency = %s, updated_at = NOW()
         WHERE name = %s AND retailer = %s
         """
-        data = (price, product_url, image_url, name, retailer)
+        data = (price, product_url, image_url, currency, name, retailer)
         use_db(query, data)
     else:
         query = """
-        INSERT INTO products (name, price, product_url, retailer, image_url)
-        VALUES (%s, %s, %s, %s, %s);
+        INSERT INTO products (name, price, product_url, retailer, image_url, currency)
+        VALUES (%s, %s, %s, %s, %s, %s);
         """
-        use_db(query, (name, price, product_url, retailer, image_url))
+        use_db(query, (name, price, product_url, retailer, image_url, currency))
     product_id = get_product_id(name, retailer)
     return product_id
 
 def search_products_with_keyword(key: str, num_per_pages=200, start=0):
     products = scrape_products(key, num_per_pages, start)
     for product in products:
-        product_id = insert_or_update_product(product['title'], product['price'], product['product_url'], product['retailer'], product['image'])
+        product_id = insert_or_update_product(product['title'], product['price'], product['product_url'], product['retailer'], product['image'], product['currency'])
         product['product_id'] = product_id
         # rename title to name
         product['name'] = product.pop('title')
@@ -76,7 +77,7 @@ def search_products_with_keyword(key: str, num_per_pages=200, start=0):
 
 def search_product_with_product_id(product_id):
     query = """
-    SELECT name, price, product_url, retailer, image_url
+    SELECT name, price, product_url, retailer, image_url, currency
     FROM products
     WHERE product_id = %s;
     """
@@ -88,13 +89,14 @@ def search_product_with_product_id(product_id):
             'price': float(result[0][1]),
             'product_url': result[0][2],
             'retailer': result[0][3],
-            'image_url': result[0][4]
+            'image_url': result[0][4],
+            'currency': result[0][5]
         }
     return None
 
 def get_lastest_products(top_k):
     query = """
-    SELECT product_id, name, price, product_url, retailer, image_url
+    SELECT product_id, name, price, product_url, retailer, image_url, currency
     FROM products
     ORDER BY created_at DESC
     LIMIT %s;
@@ -107,12 +109,13 @@ def get_lastest_products(top_k):
         'price': float(result[2]),
         'product_url': result[3],
         'retailer': result[4],
-        'image_url': result[5]
+        'image_url': result[5],
+        'currency': result[6]
     } for result in results]
 
 def get_recent_products(top_k):
     query = """
-    SELECT product_id, name, price, product_url, retailer, image_url
+    SELECT product_id, name, price, product_url, retailer, image_url, currency
     FROM products
     ORDER BY updated_at DESC
     LIMIT %s;
@@ -125,7 +128,8 @@ def get_recent_products(top_k):
         'price': float(result[2]),
         'product_url': result[3],
         'retailer': result[4],
-        'image_url': result[5]
+        'image_url': result[5],
+        'currency': result[6]
     } for result in results]
 
 """

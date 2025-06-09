@@ -2,61 +2,36 @@ from flask import Flask, request
 from bs4 import BeautifulSoup
 from fake_useragent import UserAgent
 from selenium import webdriver
+from serpapi import GoogleSearch
 
 app = Flask(__name__)
 user_agent = UserAgent(os=['linux', 'macos', 'windows'])
 
-def get_information_from_html(html_content):
-    soup = BeautifulSoup(html_content, 'html.parser')
+def search_google_products(query):
+    params = {
+        "engine": "google",
+        "q": query,
+        "tbm": "shop",  # Google Shopping tab
+        "api_key": "dec57482862f68e86b112bf3cce311209b6bb0bf28a2a00f51d9c99d49780a8b"
+    }
+
+    search = GoogleSearch(params)
+    results = search.get_dict()
 
     products = []
-    for item in soup.select('.sh-dgr__grid-result'):
-        title = item.select_one('h3.tAxDx').text.strip() if item.select_one('h3.tAxDx') else None
-        price = item.select_one('span.a8Pemb.OFFNJ').text.strip() if item.select_one('span.a8Pemb.OFFNJ') else None
-        if price:
-            # get number only
-            price = ''.join([i for i in price if i.isdigit()])
-            price = int(price)
-        image = item.select_one('div.FM6uVc > div.ArOc1c > img')['src'] if item.select_one('div.FM6uVc > div.ArOc1c > img') else None
-        retailer = item.select_one('.aULzUe.IuHnof').text.strip() if item.select_one('.aULzUe.IuHnof') else None
-        product_url = 'https://www.google.com' + item.select_one('a.Lq5OHe')['href'] if item.select_one('a.Lq5OHe') else None
-
-        products.append({
-            'title': title,
-            'price': price,
-            'image': image,
-            'retailer': retailer,
-            'product_url': product_url
-        })
+    for item in results.get("shopping_results", []):
+        product = {
+            "title": item.get("title"),
+            "price": item.get("extracted_price"),
+            "image": item.get("thumbnail"),
+            "retailer": item.get("source"),
+            "product_url": item.get("product_link"),
+            "currency": "USD"
+        }
+        products.append(product)
     return products
-def scrape_google_shopping(url):
-    options = webdriver.ChromeOptions()
-    options.add_argument('--headless')  # Run Chrome in headless mode
-    options.add_argument('--no-sandbox')  # Disable the sandbox (needed for Docker)
-    options.add_argument('--disable-dev-shm-usage')  # Overcome shared memory issues
-
-    driver = webdriver.Chrome(options=options)
-    driver.get(url)
-    driver.implicitly_wait(0.5)
-    html_content = driver.page_source
-    driver.quit()
-    return get_information_from_html(html_content)
-
-def get_redirect_url(url):
-    options = webdriver.ChromeOptions()
-    options.add_argument('--headless')  # Run Chrome in headless mode
-    options.add_argument('--no-sandbox')  # Disable the sandbox (needed for Docker)
-    options.add_argument('--disable-dev-shm-usage')  # Overcome shared memory issues
-
-    driver = webdriver.Chrome(options=options)
-    driver.get(url)
-    driver.implicitly_wait(0.5)
-    redirect_url = driver.current_url
-    driver.quit()
-    return redirect_url
 
 def scrape_products(products, num_per_pages=200, start=0):
-    query = "+".join(products.split())
-    url = f'https://www.google.com/search?q={query}&tbm=shop&num={num_per_pages}&start={start}'
-    all_products = scrape_google_shopping(url)
-    return all_products
+    query = " ".join(products.split())
+    url = f'https://www.google.com/search?q={query}&udm=28&num={num_per_pages}&start={start}'
+    return search_google_products(query)
