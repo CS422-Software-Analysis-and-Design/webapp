@@ -57,7 +57,7 @@ function ChatbotScreen() {
         );
 
         // Assuming the response contains the new conversation ID
-        const newConversationId = response.data.conversation_id;
+        const newConversationId = response.data;
 
         // Refresh the conversation list
         fetchConversations();
