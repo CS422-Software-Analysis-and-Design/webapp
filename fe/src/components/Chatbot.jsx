@@ -30,6 +30,8 @@ function ChatbotScreen() {
           temp.push({ id: response.data[i] });
           tempTitles.push(`Conversation ${i + 1}`);
         }
+        temp.reverse();
+        tempTitles.reverse();
         setConversations(temp);
         setConversationTitles(tempTitles);
       } catch (error) {

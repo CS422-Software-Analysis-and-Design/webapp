@@ -3,6 +3,7 @@
   overflow-x: auto;  /* Makes tables scrollable on small screens */
   margin-bottom: 1.5rem;
   border-radius: 0.5rem;
+  max-width: 100%;
 }
 
 /* Styles for Markdown headers */
@@ -111,6 +112,10 @@
 
 /* Handle responsive tables for mobile devices */
 @media (max-width: 768px) {
+  .markdown-table-container {
+    overflow-x: auto;
+  }
+  
   .markdown-content table {
     display: block;
     width: 100%;

@@ -3,7 +3,9 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import LoadingSpinner from './LoadingSpinner';
+import '../styles/markdown.css';
 
 function ProductDetail() {
   const { productId } = useParams();
@@ -127,12 +129,11 @@ function ProductDetail() {
       </div>      {/* Specifications Section */}
       <div className="bg-white shadow p-4 rounded mt-6">
         <h3 className="text-3xl font-bold mb-4">Thông tin</h3>
-        {descriptionLoading ? (
-          <div className="flex justify-center py-8">
+        {descriptionLoading ? (          <div className="flex justify-center py-8">
             <LoadingSpinner />
           </div>        ) : description ? (
-          <div className="product-description prose max-w-none">
-            <ReactMarkdown className="markdown-content">{description}</ReactMarkdown>
+          <div className="product-description prose max-w-none markdown-table-container">
+            <ReactMarkdown remarkPlugins={[remarkGfm]} className="markdown-content">{description}</ReactMarkdown>
           </div>
         ) : (
           <p>No description available for this product.</p>

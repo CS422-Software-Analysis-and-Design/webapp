@@ -139,6 +139,36 @@ const LoginForm = () => {
       </div>
       {/* Social Login Buttons */}
       <div className="flex justify-center space-x-4">
+        {/* Facebook Button */}
+        <button
+          className="flex items-center justify-center w-10 h-10 text-white rounded-full bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          aria-label="Sign in with Facebook"
+        >
+          {/* Facebook Icon */}
+          <svg
+            className="w-5 h-5"
+            fill="currentColor"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
+            <path d="M22 12.07c0-5.52-4.48-10-10-10S2 6.55 2 12.07c0 4.99 3.66 9.12 8.44 9.88v-6.99h-2.54v-2.89h2.54V9.83c0-2.5 1.49-3.89 3.77-3.89 1.09 0 2.23.2 2.23.2v2.46h-1.25c-1.24 0-1.63.77-1.63 1.56v1.87h2.78l-.44 2.89h-2.34V22c4.78-.77 8.44-4.89 8.44-9.93z" />
+          </svg>
+        </button>
+        {/* Google Button */}
+        <button
+          className="flex items-center justify-center w-10 h-10 text-white rounded-full bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
+          aria-label="Sign in with Google"
+        >
+          {/* Google Icon */}
+          <svg
+            className="w-5 h-5"
+            fill="currentColor"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
+            <path d="M21.35 11.1h-9.18v2.7h5.22c-.45 1.91-2.21 2.97-5.22 2.97-3.16 0-5.74-2.6-5.74-5.77s2.58-5.77 5.74-5.77c1.67 0 3.17.7 4.25 1.83l2.81-2.8C17.76 2.54 15.06 1.37 12 1.37 6.48 1.37 2 5.82 2 11.33S6.48 21.3 12 21.3c5.64 0 10.05-4.15 10.05-9.97 0-.67-.07-1.32-.2-1.93h-.5z" />
+          </svg>
+        </button>
       </div>
       {/* Sign Up Link */}
       <p className="mt-8 text-sm text-center text-gray-700">
