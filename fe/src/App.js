@@ -7,6 +7,7 @@ import AppPage from "./pages/AppPage";
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import { Helmet } from "react-helmet";
+import ScrollToTop from "./components/ScrollToTop";
 
 function App() {
   const location = useLocation();
@@ -15,6 +16,8 @@ function App() {
       <Helmet>
           <title>{DynamicTitle(location.pathname)}</title>
       </Helmet>
+      
+      <ScrollToTop />
 
       <Routes>
         <Route path="/" element={<Navigate to="/login" replace={true} />} />
