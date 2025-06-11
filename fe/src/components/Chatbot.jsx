@@ -28,7 +28,7 @@ function ChatbotScreen() {
         const tempTitles = [];
         for (let i = 0; i < response.data.length; i++) {
           temp.push({ id: response.data[i] });
-          tempTitles.push(`Conversation ${response.data[i]}`);
+          tempTitles.push(`Conversation ${i + 1}`);
         }
         setConversations(temp);
         setConversationTitles(tempTitles);

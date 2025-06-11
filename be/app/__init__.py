@@ -215,4 +215,43 @@ def compare_products():
     return {
         'status': 'failed',
         'message': 'Failed to compare products'
-    }, 400       
+    }, 400
+
+@app.route('/chatbot/<int:product_id>/description', methods=['GET'])
+def get_product_description(product_id: int):
+    """Get an AI-generated description for a product based on its ID.
+    
+    Args:
+        product_id: The ID of the product to describe
+        
+    Returns:
+        A JSON object containing the product description in markdown format
+    """
+    # First, get the product data
+    product = product_services.search_product_with_product_id(product_id)
+    
+    if not product:
+        return {
+            'status': 'failed',
+            'message': 'Product not found'
+        }, 404
+    
+    # Attempt to generate a description with retries
+    cnt = 0
+    max_attempts = 3
+    while cnt < max_attempts:
+        try:
+            result = openai_services.generate_product_description(product)
+            return {
+                'status': 'success',
+                'message': result,
+                'attempt': cnt
+            }, 200
+        except Exception as e:
+            print(f"Error generating description (attempt {cnt+1}/{max_attempts}): {str(e)}")
+            cnt += 1
+    
+    return {
+        'status': 'failed',
+        'message': 'Failed to generate product description'
+    }, 400

@@ -1,16 +1,17 @@
 import React from 'react';
-import { useParams, useNavigate, useLocation} from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import ReactMarkdown from 'react-markdown';
 import LoadingSpinner from './LoadingSpinner';
 
 function ProductDetail() {
   const { productId } = useParams();
   const [product, setProduct] = useState(null);
+  const [description, setDescription] = useState('');
+  const [descriptionLoading, setDescriptionLoading] = useState(false);
   const navigate = useNavigate();
-  const [isLoading, setLoading] = useState(false);
-
-  useEffect(() => {
+  const [isLoading, setLoading] = useState(false);  useEffect(() => {
     // Fetch product details from the server
     const fetchProduct = async () => {
       setLoading(true);
@@ -18,13 +19,32 @@ function ProductDetail() {
         const response = await axios.get(`http://localhost:5002/product/${productId}`);
         setProduct(response.data);
         setLoading(false);
+        
+        // Fetch description separately after product details are loaded
+        fetchProductDescription(productId);
       } catch (err) {
         console.error('Error fetching product details:', err);
         setLoading(false);
       }
+    };    // Separate function to fetch product description
+    const fetchProductDescription = async (id) => {
+      setDescriptionLoading(true);
+      try {
+        const descResponse = await axios.get(`http://localhost:5002/chatbot/${id}/description`);
+        if (descResponse.data && descResponse.data.status === 'success') {
+          setDescription(descResponse.data.message);
+        } else {
+          console.error('Description response format unexpected:', descResponse.data);
+        }
+      } catch (descErr) {
+        console.error('Error fetching product description:', descErr);
+      } finally {
+        setDescriptionLoading(false);
+      }
     };
+
     fetchProduct();
-  }, []);
+  }, [productId]);
   const onBackButtonClicked = () => {
     navigate(`/app/products`);
   };
@@ -104,20 +124,19 @@ function ProductDetail() {
             </form>
           </div>
         </div>
-      </div>
-
-      {/* Specifications Section */}
+      </div>      {/* Specifications Section */}
       <div className="bg-white shadow p-4 rounded mt-6">
-        <h3 className="text-lg font-bold mb-4">Thông số kỹ thuật</h3>
-        <ul className="list-disc pl-4 space-y-2">
-          <li>Hệ điều hành: Android 15</li>
-          <li>Chip xử lý (CPU): MediaTek Dimensity 9400</li>
-          <li>Tốc độ CPU: 1 nhân 3.6GHz, 3 nhân 3.3GHz, 4 nhân 2.4GHz</li>
-          <li>Chip đồ họa (GPU): ARM Immortalis G925 MC12</li>
-          <li>RAM: 16GB</li>
-          <li>Dung lượng lưu trữ: 512GB</li>
-          <li>Dung lượng còn lại (khả dụng): 475GB</li>
-        </ul>
+        <h3 className="text-3xl font-bold mb-4">Thông tin</h3>
+        {descriptionLoading ? (
+          <div className="flex justify-center py-8">
+            <LoadingSpinner />
+          </div>        ) : description ? (
+          <div className="product-description prose max-w-none">
+            <ReactMarkdown className="markdown-content">{description}</ReactMarkdown>
+          </div>
+        ) : (
+          <p>No description available for this product.</p>
+        )}
       </div>
 
       {/* Footer Section */}

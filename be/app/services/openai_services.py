@@ -125,3 +125,33 @@ def compare_products(products):
 
     return response_text
 
+def generate_product_description(product):
+    """Generates a detailed description for a product using OpenAI.
+    
+    Args:
+        product: A dictionary containing product information (name, price, retailer, etc.)
+        
+    Returns:
+        A string containing the AI-generated product description in markdown format
+    """
+    # Create a prompt for the product description
+    product_info = f"{product['name']} from {product['retailer']} priced at {product['price']} {product.get('currency', 'VND')}"
+    user_content = f"Generate a detailed, informative, and engaging product description for {product_info}. Don't include the information that we gave you already. Include potential features, benefits, and use cases. Each header (potential features, benefits, and use cases) use bullet point. Translate to Vietnamese. Format the response in markdown."
+
+    # Send request to OpenAI
+    response = client.chat.completions.create(
+        model=Config.ASSISTANT_MODEL,
+        messages=[{
+            'role': 'system',
+            'content': Config.ASSISTANT_PROMPT
+        }, {
+            'role': 'user',
+            'content': user_content
+        }],
+    )
+
+    response_text = response.choices[0].message.content
+    print(f'Generated description for {product["name"]}: {response_text[:100]}...')
+    
+    return response_text
+

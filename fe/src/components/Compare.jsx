@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import '../styles/markdown.css';
 
 function Compare() {
   // State to manage the available products
@@ -477,8 +478,7 @@ function Compare() {
                 </button>
               </div>
 
-              {recommendations && (
-                <div className="bg-white border border-gray-100 rounded-xl p-6 prose max-w-none">
+              {recommendations && (                <div className="bg-white border border-gray-100 rounded-xl p-6 prose max-w-none">
                   <div className="flex items-center mb-4">
                     <div className="h-10 w-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 mr-3">
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -487,9 +487,14 @@ function Compare() {
                     </div>
                     <h3 className="text-lg font-semibold text-gray-800">Products analysist</h3>
                   </div>
-                  <ReactMarkdown remarkPlugins={[remarkGfm]} className="text-gray-700">
-                    {recommendations}
-                  </ReactMarkdown>
+                  <div className="markdown-table-container">
+                    <ReactMarkdown 
+                      remarkPlugins={[remarkGfm]} 
+                      className="text-gray-700 markdown-content"
+                    >
+                      {recommendations}
+                    </ReactMarkdown>
+                  </div>
                 </div>
               )}
 
