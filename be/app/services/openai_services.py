@@ -136,7 +136,7 @@ def generate_product_description(product):
     """
     # Create a prompt for the product description
     product_info = f"{product['name']} from {product['retailer']} priced at {product['price']} {product.get('currency', 'VND')}"
-    user_content = f"Generate a detailed, informative, and engaging product description for {product_info}. Don't include the information that we gave you already. Include potential features, benefits, and use cases. Each header (potential features, benefits, and use cases) use bullet point. Translate to Vietnamese. Format the response in markdown."
+    user_content = f"Generate a detailed, informative, and engaging product description for {product_info}. Response in Vietnamese only. Don't include the information that we gave you already. Include potential features, benefits, and use cases. Each header (potential features, benefits, and use cases) use bullet point. Format the response in markdown."
 
     # Send request to OpenAI
     response = client.chat.completions.create(
