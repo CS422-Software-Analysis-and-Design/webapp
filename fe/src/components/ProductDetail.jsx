@@ -63,7 +63,7 @@ function ProductDetail() {
         <div>
           <h1 className="text-xl font-bold">{product.name}</h1>
           <p className="text-yellow-500 font-bold">
-            Chỉ có tại <span className="text-black">thegioididong</span>
+            Chỉ có tại <span className="text-black">{product.retailer}</span>
           </p>
         </div>
         {/* Navigate to Original URL Button */}
@@ -90,7 +90,7 @@ function ProductDetail() {
 
         {/* Pricing Section */}
         <div className="bg-white shadow p-4 rounded">
-          <h2 className="text-red-500 text-2xl font-bold mb-2">${product.price}</h2>
+          <h2 className="text-red-500 text-2xl font-bold mb-2">{product.price}{product.currency === "VND" ? "₫" : "$"}</h2>
           <p className="text-orange-500 font-semibold">HÀNG SẮP VỀ</p>
 
           {/* Registration Form */}
